@@ -63,5 +63,3 @@ Key factors to consider
 - Multi-model as it supports APIs to access data such as SQL API, Cassandra, MongoDB, Gremlin API
 - High throughput as it provides real time response times for a variety of data
 - Use cases: web, mobile gaming  or IOT applications that need to handle massive amounts of data reads, writes, and are global scale with near real time response
-
-#
