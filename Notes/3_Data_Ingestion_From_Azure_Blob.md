@@ -85,3 +85,7 @@ Event Trigger creation and monitoring:
 - Upload raw_gz file to source container through Microsoft Azure Storage Explorer
 - Using Monitor tab, view trigger runs status as successful and view the pipeline to show the Pipeline run consisting of all Activity runs that have succeeded (or failed)
 - Dashboards display Pipeline, Activity, and Triggers succeeded
+
+## Pipeline Ingest Population Data
+
+<img src="Docs/pipelineingestpopulation.png">
