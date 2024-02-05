@@ -100,7 +100,7 @@ Data Flow UI:
 
 <img src="Docs/data_flow.png">
 
-#### Create ADF Pipeline
+#### Data Flow Execution using ADF Pipeline
 - Now the Data Flow is completed, create a pipeline to execute the data flow
 - Create an ADF pipeline with a Data Flow activity and specify the data flow
 - Specify compute size (and option to stage and ingest data into Azure Synapse Analytics)
@@ -120,7 +120,7 @@ Data Flow UI:
 #### Data Storage Explorer
 - In the processed container, transformed data has been successfully output - data is distributed across nodes so files are split into 100+ files as work is processed in chunks
 
-#### Triggerz
+#### Triggers
 - Trigger now (manual trigger) to trigger pipeline now using last published configurations (Data flow debug not required to be started initially)
 - Data Flow status will be AquiringCompute whilst it creating a spark cluster
 - Pipeline is now completed and transformation is executed
