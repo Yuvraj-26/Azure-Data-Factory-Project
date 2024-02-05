@@ -49,7 +49,6 @@ Azure Databricks operates out of a control plane and a compute plane.
 
 - Test if containers from Azure Storage mounted successfully
 
-
 ## Transformation Requirement - Transform Population By Age Data (Python)
 - drop all data except for 2019 which is required for this project
 - substring to obtain country_code_2_digit from raw column
@@ -82,7 +81,6 @@ Azure Databricks operates out of a control plane and a compute plane.
 
 <img src="Docs/transform_population_data_join.png
 ">
-
 
 ## ADF pipeline - Databricks Notebook Activity
 - Execute databricks notebook from Azure Data Factory using ADF pipeline with Databricks notebook activity to transform Population by age data
