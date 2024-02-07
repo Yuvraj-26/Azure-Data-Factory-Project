@@ -288,3 +288,155 @@ Test by Create release pipeline or Test by triggering a change from Dev Data fac
 
 - ADF - Prod data factory has both pipelines and trigger as expected
 - Completed ADF CD Option 1 Release Pipeline which uses ARM Template from the adf_publish to deploy updates and changes to Test and Prod
+
+## Option 1 - ADF Publish vs Option 2 - Build Pipeline
+
+CI/CD Option 1 - Using ADF Publish
+
+<img src="Docs/cicd28.png">
+
+- requires Manual Build (Build Stage) as Publish in ADF is required after pull request is completed to generate ARM Template
+- Publish validates data factory resources and generates the ARM Template in the adf_publish branch
+
+CI/CD Option 2 - Using Build Pipeline
+
+<img src="Docs/cicd29.png">
+
+- DevOps Build Pipeline to invoke ADFUtilities Npm package
+- On successful build, pipeline will create build artefact with ARM Template
+- Release pipeline can be modified to consume ARM Template from build aterfact and deploy this ARM Template to ADF - Dev and then ADF - Test and ADF - Prod
+
+
+<img src="Docs/cicd30.png">
+- Option 2 is a fully automated CI / CD Solution
+
+## Azure Data Factory Automated publishing for continuous integration and delivery
+
+Current CI / CD Flow
+- Current CI / CD Flow (Option 1)
+  - uses Git (DevOps or GitHub)
+  - create feature branches and pull request changes to merge to main
+  - Manual Step - Publish in ADF to generate ARM Template and deployment to ADF - Dev
+  - Release pipeline pulls Publish branch as artefact
+  - Stage Test and Prod Development
+  - Deploy changes to ADF - Test and ADF - Prod
+
+New CI / CD Flow
+- uses Git (DevOps or GitHub)
+- create feature branches and pull request changes to merge to Collaboration branch (main)
+- Automatically trigger build on commit
+- DevOps build pipeline calls ADFUtilities Npm package which validates ADF resources and generates ARM Template, and creates Build
+- Release pipeline pulls artefacts
+from the DevOps build pipeline
+- Results in automatic CI deployment to ADF Dev and Stage Deployment to ADF - Test and ADF - Prod
+
+## Option 2 - ADF CI Build Pipeline - YAML Build Pipeline Script
+
+- package.json
+  - required to install azure-data-factory-utilities package
+- adf-ci-option-2-build-pipeline.yaml
+  - build pipeline for the development Azure Data Factory
+  - automatically triggered on completion of a pull request and merge to main branch
+  - validates the ADF resources
+  - generates ARM Template and publishes for consumption via Release pipeline
+
+<img src="Docs/cicd31.png">
+
+- In Azure DevOps Dev repo, create feature branch, new folder build,  upload package.json and yaml configuration file
+- commit, pull request, merge to main branch
+
+## Option 2 - ADF CI Build Pipeline - Create YAML Build Pipeline
+
+- In Azure DevOps, Create Pipeline
+- Select Azure Repos Git and dev repo
+- Existing Azure Pipelines YAML file and select yaml configuration file
+
+<img src="Docs/cicd32.png">
+
+- Run Pipeline
+- View Jobs in run
+
+<img src="Docs/cicd33.png">
+
+1 Artefact Published which is the ArmTemplates to be consumed from Release Pipeline
+
+
+- Trigger the Pipeline by making changes to ADF - Dev
+- create feature branch, implement changes to pipeline_3
+- pull request and merge changes
+- ADF CI Option 2 Build Pipeline automatically starts Pipeline Run
+
+<img src="Docs/cicd34.png">
+
+- Build of Azure Data Factory is now automated and ARM Templates are published as artefacts
+
+
+## Option 2 - Update Release Pipeline
+
+Create a Release pipeline that consumes the ARM Template published by the Build Pipeline
+- Clone and create ADF CD Option 2 Release Pipeline
+- Delete Artefact pointing to the adf_publish branch
+- Add new artefact from source type Build
+- Replace ARM Template and ARM Template Parameters location in all task (pre deployment, ARM Template deployment, post deployment) to the file paths to the Build Pipeline locations
+
+<img src="Docs/cicd35.png">
+
+- Deploy to Dev - ADF as there is no longer a Publish which deploys changes to Dev
+- Clone Test Stage and Create Dev Stage
+- Edit Dev variables
+- Correct order of execution
+
+<img src="Docs/cicd36.png">
+
+- Completed CD Option 2 Release Pipeline
+- Provide access for service connection to deploy to dev resource group
+- In dev resource group, access control (IAM), assign Contributor role for service principal
+- Now service connection from Azure DevOps has access to the Dev resource group allowing deployment to the resource group
+
+## Option 2 - Testing CD Option 2 Release Pipeline
+
+- Test individual Stages using Manual Create Release
+- Dev succeeded
+- Test Succeeded
+- Prod waiting for manual approval
+- On approval, Prod succeeded
+
+<img src="Docs/cicd37.png">
+
+- ADF CD Option 2 Release Pipeline takes the artefact ARM Templates from the Build Pipeline and deploys to Dev - ADF, Test - ADF, and on manual approval to Prod - ADF
+
+
+## Option 2 - Enable Continuos Deployment on Release Pipeline Artefact
+
+- Enable Continuous deployment
+- Build pipeline has a trigger which is triggered on any changes to main branch
+- To trigger the Release pipeline as soon as the Build has completed
+  - Enable continuos deployment trigger on the Build artefact
+
+<img src="Docs/cicd38.png">
+
+
+## Option 2 - CI / CD End to End Testing
+- In ADF - Dev, create new feature branch
+- Implement pipeline_4
+- Save all and create pull request, approve changes, and complete merge to main
+- On successful merge to main branch, build pipeline is triggered and run
+
+<img src="Docs/cicd39.png">
+
+- Build is completed with 1 published artefact which contains ARM Templates
+- On successful build, release pipeline is triggered with 3 stages
+
+<img src="Docs/cicd40.png">
+
+- Release pipeline Stages outcomes:
+- Dev stage deployment succeeded
+  - pipeline_4 exists in live mode
+- Test stage deployment succeeded
+  - pipeline_4 exists in live mode
+- On Manual approval process, Prod stage deployment succeeded
+  - pipeline_4 exists in live mode
+
+<img src="Docs/cicd41.png">
+
+- successfully implemented Build and Release Pipeline to seamlessly deploy code from Dev to Test to Production automatically
